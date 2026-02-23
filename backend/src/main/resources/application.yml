@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chrono-auth
+  datasource:
+    url: jdbc:mariadb://localhost:3306/chrono_auth
+    username: chrono_user
+    password: chrono_password
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  ldap:
+    urls: ldap://localhost:389
+    base: dc=chrono-auth,dc=local
+    username: cn=admin,dc=chrono-auth,dc=local
+    password: admin
+
+app:
+  auth-method: ${AUTH_METHOD:bypass} # Can be 'ldap' or 'bypass'
+  jwt:
+    secret: "A_VERY_LONG_SECRET_KEY_FOR_JWT_THAT_IS_AT_LEAST_256_BITS_LONG_AND_SECURE_1234567890"
+    expirationMs: 86400000 # 24 hours

@@ -1,0 +1,34 @@
+# Add custom LDAP groups and users
+
+dn: ou=users,dc=chrono-auth,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: uid=testuser,ou=users,dc=chrono-auth,dc=local
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: testuser
+uid: testuser
+uidNumber: 10000
+gidNumber: 10000
+homeDirectory: /home/testuser
+loginShell: /bin/bash
+gecos: Test User
+userPassword: {SSHA}password -- you might need to generate a real hash or just use plain text if testing, let's use plain text for simplicity in dev: testpassword
+userPassword: testpassword
+
+dn: uid=adminuser,ou=users,dc=chrono-auth,dc=local
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: adminuser
+uid: adminuser
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/adminuser
+loginShell: /bin/bash
+gecos: Admin User
+userPassword: adminpassword

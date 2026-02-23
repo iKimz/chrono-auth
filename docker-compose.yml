@@ -1,0 +1,76 @@
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: chrono_auth_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: chrono_auth
+      MYSQL_USER: chrono_user
+      MYSQL_PASSWORD: chrono_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: chrono_auth_ldap
+    environment:
+      LDAP_ORGANISATION: "ChronoAuth"
+      LDAP_DOMAIN: "chrono-auth.local"
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_TLS: "false"
+      LDAP_TLS_VERIFY_CLIENT: "never"
+    ports:
+      - "389:389"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ./init-scripts/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/bootstrap.ldif:ro
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: chrono_auth_ldap_admin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "ldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "6443:80"
+    depends_on:
+      - ldap
+
+  backend:
+    build: ./backend
+    container_name: chrono_auth_backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/chrono_auth
+      - SPRING_DATASOURCE_USERNAME=chrono_user
+      - SPRING_DATASOURCE_PASSWORD=chrono_password
+      - SPRING_LDAP_URLS=ldap://ldap:389
+      - AUTH_METHOD=bypass
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      ldap:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: chrono_auth_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mariadb_data:
+  ldap_data:
+  ldap_config:
