@@ -19,6 +19,7 @@ public class OtpService {
     private String serviceName;
 
     @Column(name = "secret_key", nullable = false)
+    @Convert(converter = com.chrono.auth.utils.SecretKeyConverter.class)
     private String secretKey;
 
     @Column(name = "created_at", nullable = false, updatable = false)

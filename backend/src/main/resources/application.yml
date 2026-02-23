@@ -24,6 +24,8 @@ spring:
 
 app:
   auth-method: ${AUTH_METHOD:bypass} # Can be 'ldap' or 'bypass'
+  encryption:
+    key: ${CHRONO_ENCRYPTION_KEY:ChronoAuthDefaultSecretKey12345!}
   jwt:
     secret: "A_VERY_LONG_SECRET_KEY_FOR_JWT_THAT_IS_AT_LEAST_256_BITS_LONG_AND_SECURE_1234567890"
     expirationMs: 86400000 # 24 hours

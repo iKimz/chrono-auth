@@ -79,7 +79,9 @@ The backend behavior is governed by environment configurations defined in `docke
 
 ## Security Note
 
-ChronoAuth currently stores Secret Keys inside the MariaDB database as plaintext strings payload. **Do not use this application for highly sensitive production secrets without first implementing an encryption-at-rest (AES-256) layer at the application level!**
+ChronoAuth securely stores all Secret Keys inside the MariaDB database using **AES-256 Encryption at Rest**. 
+
+The encryption key is automatically generated or can be explicitly passed in via the `CHRONO_ENCRYPTION_KEY` environment variable within your `docker-compose.yml` file, safeguarding secrets from being exposed as plaintext payloads.
 
 ---
 

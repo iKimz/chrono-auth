@@ -54,6 +54,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=chrono_password
       - SPRING_LDAP_URLS=ldap://ldap:389
       - AUTH_METHOD=bypass
+      - CHRONO_ENCRYPTION_KEY=${CHRONO_ENCRYPTION_KEY:-SecureDockerKey32BytesForAES1!}
     ports:
       - "8080:8080"
     depends_on:
